@@ -8,11 +8,19 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
     />
+
+    <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
+    
     <link rel="shortcut icon" href="https://www.gstatic.com/images/branding/product/1x/keep_2020q4_48dp.png" type="image/x-icon">
     <title>Google Keep</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+
+    <div id="auth"></div>
+
+  <div id="app">
     <nav>
       <div class="logo-area">
         <div class="tooltip">
@@ -59,9 +67,10 @@
           <span class="material-symbols-outlined hover">apps</span>
           <span class="tooltip-text">Apps</span>
         </div>
-        <div class="tooltip">
+        <div class="tooltip logout">
           <span class="material-symbols-outlined hover">account_circle</span>
-          <span class="tooltip-text">Accounts</span>
+          <span class="tooltip-text">Logout</span>
+          <span class="auth-user"></span>
         </div>
       </div>
     </nav>
@@ -256,6 +265,31 @@
         </div>
       </div>
     </main>
+  </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+ 
+    <script>
+
+          const firebaseConfig = {
+            apiKey: "AIzaSyBc7eefwL9n5mG-5PNiUpCpBe-Nt6Y5t3E",
+            authDomain: "keeps-app-a183a.firebaseapp.com",
+            projectId: "keeps-app-a183a",
+            storageBucket: "keeps-app-a183a.appspot.com",
+            messagingSenderId: "287539429496",
+            appId: "1:287539429496:web:873e07b00de2ad4e942d8d"
+          };
+        
+          const firebaseApp = firebase.initializeApp(firebaseConfig);
+          const db = firebaseApp.firestore();
+          const auth = firebaseApp.auth();
+
+
+         
+
+    </script>
 
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/cuid/1.3.8/browser-cuid.min.js"
@@ -263,6 +297,8 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
+
     <script src="script.js"></script>
+
   </body>
 </html>

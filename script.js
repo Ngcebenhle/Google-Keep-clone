@@ -10,7 +10,7 @@ class Note {
     constructor() {
       // localStorage.setItem('test', JSON.stringify(['123']));
       // console.log(JSON.parse(localStorage.getItem('test')));
-      this.notes = JSON.parse(localStorage.getItem("notes")) || [];
+      // this.notes = JSON.parse(localStorage.getItem("notes")) || [];
       this.selectedNoteId = "";
       this.miniSidebar = true;
   
@@ -27,9 +27,71 @@ class Note {
       this.$closeModalForm = document.querySelector("#modal-btn");
       this.$sidebar = document.querySelector(".sidebar");
       this.$sidebarActiveItem = document.querySelector(".active-item");
-  
+
+
+      ////////////////////////////////////////////////////////////////////
+      this.$authDisplay = document.querySelector("#auth");
+      this.$appDiplay = document.querySelector("#app");
+
+
+      this.$appDiplay.style.display = "none"
+
+      /////////////////////////////////////////////////////////////////////////
+      this.$userDiplayName = document.querySelector(".auth-user");
+      this.$logout = document.querySelector(".logout");
+     
+      
+      // Initialize the FirebaseUI Widget using Firebase.
+      this.ui = new firebaseui.auth.AuthUI(auth);
+
+      this.handleAuth()
+
       this.addEventListeners();
       this.displayNotes();
+    }
+
+    //////////////////////////////////////////////////////////////////
+    handleAuth(){
+
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+
+          this.redirectToApp()
+          this.userId = user.uid;
+          this.$userDiplayName.textContent = this.uid;
+          
+        } else {
+          this.redirectToAuth()
+        }
+      });
+
+    }
+
+    redirectToApp(){
+      this.$appDiplay.style.display = "block"
+      this.$authDisplay.style.display = "none"
+      this.noteReadHandler();
+    }
+
+    redirectToAuth(){
+
+      this.$appDiplay.style.display = "none"
+      this.$authDisplay.style.display = "block"
+
+      this.ui.start('#auth', {
+        signInOptions: [
+          firebase.auth.EmailAuthProvider.PROVIDER_ID,
+          firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        ],
+        // Other config options...
+      });
+    }
+    handleLogout(){
+      auth.signOut().then(() => {
+        this.redirectToAuth();
+      }).catch((error) => {
+        
+      });
     }
   
     addEventListeners() {
@@ -59,6 +121,10 @@ class Note {
       this.$sidebar.addEventListener("mouseout", (event) => {
         this.handleToggleSidebar();
       });
+
+      this.$logout.addEventListener('click',(event) => {
+        this.handleLogout();
+      })
     }
   
     handleFormClick(event) {
@@ -129,7 +195,7 @@ class Note {
   
     addNote({ title, text }) {
       if (text != "") {
-        const newNote = new Note(cuid(), title, text);
+        const newNote = {id:cuid(), title, text};
         this.notes = [...this.notes, newNote];
         this.render();
       }
@@ -176,8 +242,50 @@ class Note {
       }
     }
   
+    noteReadHandler(){
+      var docRef = db.collection("Notes").doc(this.userId);
+
+        docRef.get().then((doc) => {
+            if (doc.exists) {
+                // console.log("Document data:", doc.data());
+                this.notes = doc.data().notes
+                this.displayNotes();
+            } else {
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
+
+                        // Add a new document in collection "cities"
+                db.collection("Notes").doc(this.userId).set({  
+                  notes: []    
+                })
+                .then(() => {
+                  console.log("User successfully Created!");
+                })
+                .catch((error) => {
+                  console.error("Error writing document: ", error);
+                });
+
+            }
+
+        }).catch((error) => {
+            console.log("Error getting document:", error);
+        });
+    }
+
     saveNotes() {
-      localStorage.setItem('notes', JSON.stringify(this.notes));
+      // localStorage.setItem('notes', JSON.stringify(this.notes));
+
+      
+        // Add a new document in collection "cities"
+        db.collection("Notes").doc(this.userId).set({  
+          notes: this.notes    
+        })
+        .then(() => {
+          console.log("Document successfully written!");
+        })
+        .catch((error) => {
+          console.error("Error writing document: ", error);
+        });
     }
   
     render() {
@@ -188,9 +296,7 @@ class Note {
   //  onmouseover="app.handleMouseOverNote(this)" onmouseout="app.handleMouseOutNote(this)"
   
     displayNotes() {
-      this.$notes.innerHTML = this.notes
-        .map(
-          (note) =>
+      this.$notes.innerHTML = this.notes.map((note) =>
             `
           <div class="note" id="${note.id}">
             <span class="material-symbols-outlined check-circle"
