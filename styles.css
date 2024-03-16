@@ -286,7 +286,7 @@ input:focus {
   display: flex;
   padding: 0;
   justify-content: center;
-  visibility: hidden;
+  /* visibility: hidden; */
 }
 
 .note-footer .material-symbols-outlined {
@@ -298,7 +298,7 @@ input:focus {
   position: absolute;
   top: -20px;
   left: -20px;
-  visibility: hidden;
+  /* visibility: hidden; */
 }
 
 /* MODAL CONTENT  */

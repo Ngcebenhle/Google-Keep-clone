@@ -13,6 +13,8 @@ class Note {
       // this.notes = JSON.parse(localStorage.getItem("notes")) || [];
       this.selectedNoteId = "";
       this.miniSidebar = true;
+
+      this.notes = [];
   
       this.$activeForm = document.querySelector(".active-form");
       this.$inactiveForm = document.querySelector(".inactive-form");
@@ -28,7 +30,7 @@ class Note {
       this.$sidebar = document.querySelector(".sidebar");
       this.$sidebarActiveItem = document.querySelector(".active-item");
 
-
+      this.$note = document.querySelector(".note");
       ////////////////////////////////////////////////////////////////////
       this.$authDisplay = document.querySelector("#auth");
       this.$appDiplay = document.querySelector("#app");
@@ -124,7 +126,8 @@ class Note {
 
       this.$logout.addEventListener('click',(event) => {
         this.handleLogout();
-      })
+      });
+
     }
   
     handleFormClick(event) {
@@ -198,6 +201,7 @@ class Note {
         const newNote = {id:cuid(), title, text};
         this.notes = [...this.notes, newNote];
         this.render();
+        // this.displayNotes()
       }
     }
   
@@ -298,7 +302,8 @@ class Note {
     displayNotes() {
       this.$notes.innerHTML = this.notes.map((note) =>
             `
-          <div class="note" id="${note.id}">
+          <div class="note" id="${note.id}" onmouseover="app.handleMouseOverNote(this)" 
+          onmouseout="app.handleMouseOutNote(this)">
             <span class="material-symbols-outlined check-circle"
               >check_circle</span
             >
