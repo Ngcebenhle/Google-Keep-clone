@@ -155,6 +155,7 @@ class Note {
       this.$activeForm.style.display = "none";
       this.$noteText.value = "";
       this.$noteTitle.value = "";
+      this.saveNotes();
     }
   
     openModal(event) {
